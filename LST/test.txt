@@ -1,0 +1,5 @@
+1,20230120-223000000,C:\Seb\sequences\6940.bin
+2,20230120-230000000,C:\Seb\sequences\6940.bin
+3,20230121-000000000,C:\Seb\sequences\6940.bin
+4,20230121-010000000,C:\Seb\sequences\6940.bin
+5,20230121-013000000,C:\Seb\sequences\6940.bin
