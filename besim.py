@@ -20,8 +20,8 @@ parser.add_argument("num_seq", nargs="?", default="6940", type=str, help='n° s�
 parser.add_argument("duration_seq", nargs="?", default="30", type=int, help='durée séq. en min.')
 parser.add_argument("num_cren", nargs="?", default="15", type=int, help='nombre de créneaux')
 parser.add_argument("file", nargs="?", default="default.json", type=str, help='nom fichier sortie')
-parser.add_argument("time_start", nargs="?", default=datetime.datetime.fromtimestamp(time_now+5*60).strftime(date_time_format), help='date et heure de départ UTC : dd/mm/YYYY hh:mm:ss')
-parser.add_argument("type_", nargs="?", default="PERSONAL", type=str, help='Type : PERSONAL or FACTORY (PERSONAL if nothing specified)'
+parser.add_argument("time_start", nargs="?", default=datetime.datetime.fromtimestamp(time_now+5*60).strftime(date_time_format), help='date et heure locale de départ (pas UTC) : dd/mm/YYYY hh:mm:ss')
+parser.add_argument("type_", nargs="?", default="PERSONAL", type=str, help='Type : PERSONAL or FACTORY (PERSONAL if nothing specified)')
 parsed_args = parser.parse_args()
 
 if __name__ == '__main__':
