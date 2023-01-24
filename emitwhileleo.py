@@ -94,7 +94,7 @@ def create_slots(num_slots, duration_seq, time_start):
     while i < num_slots:
         good_slots = False
         for j in range(len(passes)):
-            if passes[j][0] <= slot <= passes[j][1] or passes[j][0] <= slot + duration_s <= passes[j][1]:
+            if passes[j][0] <= slot <= passes[j][1] and passes[j][0] <= slot + duration_s <= passes[j][1]:
                 good_slots = True
                 break
         if good_slots:
