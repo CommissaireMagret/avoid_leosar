@@ -120,7 +120,7 @@ def writelst(num_seq, duration_seq, num_cren, file, time_start, file_path, qth_)
     for i in range(len(slots)):
         date = slots[i][0].strftime("%Y%m%d")
         hour = slots[i][0].strftime("%H%M%S000")
-        str_date_h = str(i) + "," + date + '-' + hour + "," + file_path + str(num_seq) + ".bin"
+        str_date_h = str(i+1) + "," + date + '-' + hour + "," + file_path + str(num_seq) + ".bin,1"
         lst += str_date_h + "\n"
     print(lst)
     print(str(len(slots)) + ' slots créés ---> LST/' + file)
