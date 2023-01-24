@@ -51,7 +51,7 @@ def predict_passes(time_start_epoch):
     tle4 = read_txt('TLE/tle4.txt')
     tle5 = read_txt('TLE/tle5.txt')
 
-    time_end_epoch = int(time.time() + 864000)
+    time_end_epoch = int(time.time()+864000)
 
     p1 = predict.transits(tle1, qth, time_start_epoch, time_end_epoch)
     p2 = predict.transits(tle2, qth, time_start_epoch, time_end_epoch)
@@ -92,17 +92,12 @@ def create_slots(num_slots, duration_seq, time_start):
     slots = []
     i = 0
     while i < num_slots:
-        free_slot = True
+        good_slots = False
         for j in range(len(passes)):
             if passes[j][0] <= slot <= passes[j][1] or passes[j][0] <= slot + duration_s <= passes[j][1]:
-                free_slot = False
+                good_slots = True
                 break
-
-            if slot <= passes[j][0] <= slot + duration_s or slot <= passes[j][1] <= slot + duration_s:
-                free_slot = False
-                break
-
-        if free_slot:
+        if good_slots:
             timestamp = datetime.datetime.fromtimestamp(slot)
             timestamp_end = datetime.datetime.fromtimestamp(slot + duration_seq)
             slots.append((timestamp, timestamp_end))
