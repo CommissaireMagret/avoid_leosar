@@ -99,7 +99,7 @@ def create_slots(num_slots, duration_seq, time_start):
                 break
         if good_slots:
             timestamp = datetime.datetime.fromtimestamp(slot)
-            timestamp_end = datetime.datetime.fromtimestamp(slot + duration_seq)
+            timestamp_end = datetime.datetime.fromtimestamp(slot + duration_s)
             slots.append((timestamp, timestamp_end))
             i += 1
         slot += 1800
