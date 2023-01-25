@@ -2,8 +2,14 @@
 
 ### Generate .lst files with lst.py :
 
-pyhton3 lst.py [name of bin seq] [duration of the seq. in mins] [number of slots] [name of output file] [start date and hour : dd/mm/YYYY-hh:mm:ss]
+Generates a .lst file for the Toulouse beacon simulator
+pyhton3 lst.py -h for help
 
-### Generate .json file for besim :
+### Generate .json file for besim with besim.py :
 
-pyhton3 besim.py [name of bin seq] [duration of the seq. in mins] [number of slots] [name of output file] [start date and hour : dd/mm/YYYY-hh:mm:ss] [type of beacon : PERSONNAL or FACTORY (PERSONNAL if not specified)]
+Generates a .json file for the La Réunion beacon simulator
+pyhton3 besim.py -h for help
+
+### Generate .lst to emit specificaly while a leo SAR satellite is visible with lstwhileleo.py :
+
+Generates a .lst file where the slots are picked in order to be precisely during a leo pass above 5°.
