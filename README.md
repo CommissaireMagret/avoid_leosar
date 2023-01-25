@@ -13,3 +13,4 @@ pyhton3 besim.py -h for help
 ### Generate .lst to emit specificaly while a leo SAR satellite is visible with lstwhileleo.py :
 
 Generates a .lst file where the slots are picked in order to be precisely during a leo pass above 5°.
+This is for a specific test called SLT.
