@@ -13,6 +13,7 @@ date_time_format = "%d/%m/%Y-%H:%M:%S"
 url_error = False
 
 qth = ()
+tles = ""
 
 
 def read_txt(file_name):
@@ -38,6 +39,7 @@ def local_to_utc(local_time):
 # One day is 86400 seconds.
 def predict_passes(time_start_epoch):
     global qth
+    global tles
     qth = (qth[0], 360 - qth[1], qth[2])
     global url_error
     try:
@@ -55,6 +57,7 @@ def predict_passes(time_start_epoch):
     tle3 = read_txt('TLE/tle3.txt')
     tle4 = read_txt('TLE/tle4.txt')
     tle5 = read_txt('TLE/tle5.txt')
+    tles = tle1 + tle2 + tle3 + tle4 + tle5
 
     time_end_epoch = int(time.time()+864000)
 
@@ -102,7 +105,7 @@ def create_slots(num_slots, duration_seq, time_start):
             timestamp_end = datetime.datetime.fromtimestamp(slot + duration_s)
             slots.append((timestamp, timestamp_end))
             i += 1
-            slot += duration_s
+            slot += duration_s + 5
         else:
             slot += 60
     return slots
@@ -120,9 +123,10 @@ def writelst(num_seq, duration_seq, num_cren, file, time_start, file_path, qth_)
         str_date_h = str(i+1) + "," + date + '-' + hour + "," + file_path + str(num_seq) + ".bin,1"
         lst += str_date_h + "\n"
     print(lst)
-    print(str(len(slots)) + ' slots créés ---> LST/' + file)
+    print(str(len(slots)) + ' slots créés ---> LST/' + file + '.lst')
     print()
     write_txt('LST/' + file, lst)
+    write_txt('TLE/tle_' + file + '_lst.tle', tles)
     print('Décallage UTC de votre machine : ' + str(time.localtime().tm_gmtoff) + ' secondes (pris en compte pour la'
                                                                                   ' création des slots).')
 
@@ -146,9 +150,10 @@ def writebatch(num_seq, duration_seq, num_cren, file, time_start, type_, qth_):
     json_slots = json.dumps(json_batch, indent=4)
 
     print(json_slots)
-    print("\n" + str(len(slots)) + ' slots créés ---> BESIM/' + file)
+    print("\n" + str(len(slots)) + ' slots créés ---> BESIM/' + file + '.json')
     print()
-    write_txt('BESIM/' + file, json_slots)
+    write_txt('BESIM/' + file + '.json', json_slots)
+    write_txt('TLE/tle_' + file + '_besim.tle', tles)
     print('Décallage UTC de votre machine : ' + str(time.localtime().tm_gmtoff) + ' secondes (pris en compte pour la'
                                                                                   ' création des slots).\n')
     if url_error:
