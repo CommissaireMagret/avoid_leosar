@@ -1,4 +1,4 @@
-# avoid_leo Python tool
+# avoid_leosar Python tool
 
 ### Generate .lst files with lst.py :
 
