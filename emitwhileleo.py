@@ -88,7 +88,7 @@ def create_slots(num_slots, duration_seq, time_start):
     passes = predict_passes(time_start_epoch)
     # Take the first slot available depending on the current time. Slots must be on the hour or 1/2 hour
     # i.e. 00:00 or 00:30
-    slot = (int(local_to_utc(time_start_epoch) / 1800) + 1) * 1800
+    slot = int(local_to_utc(time_start_epoch))
     slots = []
     i = 0
     while i < num_slots:
@@ -102,7 +102,9 @@ def create_slots(num_slots, duration_seq, time_start):
             timestamp_end = datetime.datetime.fromtimestamp(slot + duration_s)
             slots.append((timestamp, timestamp_end))
             i += 1
-        slot += 1800
+            slot += duration_s
+        else:
+            slot += 60
     return slots
 
 
