@@ -96,15 +96,10 @@ def create_slots(num_slots, duration_seq, time_start):
     i = 0
     while i < num_slots:
         free_slot = True
-        for j in range(len(passes)):
-            if passes[j][0] <= slot <= passes[j][1] or passes[j][0] <= slot + duration_s <= passes[j][1]:
+        for p in passes:
+            if p[0] <= slot <= p[1] or p[0] <= slot + duration_s <= p[1] or slot <= p[0] <= slot + duration_s or slot <= p[1] <= slot + duration_s:
                 free_slot = False
                 break
-
-            if slot <= passes[j][0] <= slot + duration_s or slot <= passes[j][1] <= slot + duration_s:
-                free_slot = False
-                break
-
         if free_slot:
             timestamp = datetime.datetime.fromtimestamp(slot)
             timestamp_end = datetime.datetime.fromtimestamp(slot + duration_s)

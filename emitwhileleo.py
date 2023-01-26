@@ -97,7 +97,7 @@ def create_slots(num_slots, duration_seq, time_start):
     while i < num_slots:
         good_slots = False
         for p in passes:
-            if p[0] <= slot <= p[1] and p[0] <= slot + duration_s <= p[1]:
+            if p[0] <= slot and slot + duration_s <= p[1]:
                 good_slots = True
                 slot_sat_txt += datetime.datetime.fromtimestamp(p[0]).strftime("\n%d/%m/%Y - %H:%M:%S => ") + datetime.datetime.fromtimestamp(p[1]).strftime("%H:%M:%S | ") + p[2]
                 break
