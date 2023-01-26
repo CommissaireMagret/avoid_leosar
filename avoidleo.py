@@ -70,11 +70,11 @@ def predict_passes(time_start_epoch):
         noaa_18 = y
         noaa_19 = z
 
-        timing.append((local_to_utc(int(metop_b.above(5).start)), local_to_utc(int(metop_b.above(5).end))))
-        timing.append((local_to_utc(int(meteor_m2_2.above(5).start)), local_to_utc(int(meteor_m2_2.above(5).end))))
-        timing.append((local_to_utc(int(noaa_15.above(5).start)), local_to_utc(int(noaa_15.above(5).end))))
-        timing.append((local_to_utc(int(noaa_18.above(5).start)), local_to_utc(int(noaa_18.above(5).end))))
-        timing.append((local_to_utc(int(noaa_19.above(5).start)), local_to_utc(int(noaa_19.above(5).end))))
+        timing.append((local_to_utc(int(metop_b.above(5).start)), local_to_utc(int(metop_b.above(5).end)), "METOP-B | SARSAT-13"))
+        timing.append((local_to_utc(int(meteor_m2_2.above(5).start)), local_to_utc(int(meteor_m2_2.above(5).end)), "METEOR M2-2 | COSPAS-14"))
+        timing.append((local_to_utc(int(noaa_15.above(5).start)), local_to_utc(int(noaa_15.above(5).end)), "NOAA 15 | SARSAT-07"))
+        timing.append((local_to_utc(int(noaa_18.above(5).start)), local_to_utc(int(noaa_18.above(5).end)), "NOAA 18 | SARSAT-10"))
+        timing.append((local_to_utc(int(noaa_19.above(5).start)), local_to_utc(int(noaa_19.above(5).end)), "NOAA 19 | SARSAT-12"))
     # print(datetime.datetime.fromtimestamp(timing[0][0]).strftime("%d/%m/%Y %H:%M:%S")) # Ligne de débug
     # print(datetime.datetime.fromtimestamp(timing[0][1]).strftime("%d/%m/%Y %H:%M:%S")) # Ligne de débug
     return timing

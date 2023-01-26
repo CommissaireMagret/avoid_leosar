@@ -14,6 +14,7 @@ url_error = False
 
 qth = ()
 tles = ""
+slot_sat_txt = "Emissions pendant les passages de :\n"
 
 
 def read_txt(file_name):
@@ -75,17 +76,16 @@ def predict_passes(time_start_epoch):
         noaa_18 = y
         noaa_19 = z
 
-        timing.append((local_to_utc(int(metop_b.above(5).start)), local_to_utc(int(metop_b.above(5).end))))
-        timing.append((local_to_utc(int(meteor_m2_2.above(5).start)), local_to_utc(int(meteor_m2_2.above(5).end))))
-        timing.append((local_to_utc(int(noaa_15.above(5).start)), local_to_utc(int(noaa_15.above(5).end))))
-        timing.append((local_to_utc(int(noaa_18.above(5).start)), local_to_utc(int(noaa_18.above(5).end))))
-        timing.append((local_to_utc(int(noaa_19.above(5).start)), local_to_utc(int(noaa_19.above(5).end))))
-    # print(datetime.datetime.fromtimestamp(timing[0][0]).strftime("%d/%m/%Y %H:%M:%S")) # Ligne de débug
-    # print(datetime.datetime.fromtimestamp(timing[0][1]).strftime("%d/%m/%Y %H:%M:%S")) # Ligne de débug
+        timing.append((local_to_utc(int(metop_b.above(5).start)), local_to_utc(int(metop_b.above(5).end)), "SARSAT-13 | METOP-B"))
+        timing.append((local_to_utc(int(meteor_m2_2.above(5).start)), local_to_utc(int(meteor_m2_2.above(5).end)), "COSPAS-14 | METEOR M2-2"))
+        timing.append((local_to_utc(int(noaa_15.above(5).start)), local_to_utc(int(noaa_15.above(5).end)), "SARSAT-07 | NOAA 15"))
+        timing.append((local_to_utc(int(noaa_18.above(5).start)), local_to_utc(int(noaa_18.above(5).end)), "SARSAT-10 | NOAA 18"))
+        timing.append((local_to_utc(int(noaa_19.above(5).start)), local_to_utc(int(noaa_19.above(5).end)), "SARSAT-12 | NOAA 19"))
     return timing
 
 
 def create_slots(num_slots, duration_seq, time_start):
+    global slot_sat_txt
     time_start_epoch = timegm(time.strptime(time_start, date_time_format))
     duration_s = duration_seq * 60
     passes = predict_passes(time_start_epoch)
@@ -96,9 +96,10 @@ def create_slots(num_slots, duration_seq, time_start):
     i = 0
     while i < num_slots:
         good_slots = False
-        for j in range(len(passes)):
-            if passes[j][0] <= slot <= passes[j][1] and passes[j][0] <= slot + duration_s <= passes[j][1]:
+        for p in passes:
+            if p[0] <= slot <= p[1] and p[0] <= slot + duration_s <= p[1]:
                 good_slots = True
+                slot_sat_txt += datetime.datetime.fromtimestamp(p[0]).strftime("\n%d/%m/%Y - %H:%M:%S => ") + datetime.datetime.fromtimestamp(p[1]).strftime("%H:%M:%S | ") + p[2]
                 break
         if good_slots:
             timestamp = datetime.datetime.fromtimestamp(slot)
@@ -108,6 +109,7 @@ def create_slots(num_slots, duration_seq, time_start):
             slot += duration_s + 5
         else:
             slot += 60
+    # write_txt('TLE/SystemTestLevel_Passages')
     return slots
 
 
@@ -127,6 +129,7 @@ def writelst(num_seq, duration_seq, num_cren, file, time_start, file_path, qth_)
     print()
     write_txt('LST/' + file, lst)
     write_txt('TLE/tle_' + file + '_lst.tle', tles)
+    write_txt('TLE/SystemTestLevel_Passages_' + file + '.txt', slot_sat_txt)
     print('Décallage UTC de votre machine : ' + str(time.localtime().tm_gmtoff) + ' secondes (pris en compte pour la'
                                                                                   ' création des slots).')
 
