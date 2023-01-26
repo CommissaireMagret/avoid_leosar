@@ -2,8 +2,6 @@
 
 pip install pypredict
 
-#cat ~/.disps/cospas70.txt
-
 echo ""
 echo " Utilisation ligne de commande : "
 echo " ./gen_lst.sh <Numéro sequence> <Durée séquence> <Nombre de crénaux> <Nom du fichier lst> <Date et heure de départ : dd/mm/YYYY-HH:MM:SS>"
