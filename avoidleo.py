@@ -14,6 +14,23 @@ url_error = False
 
 qth = ()
 tles = ""
+passages_txt = """________                                                     ______   
+___  __ \_____ ____________________ _______ _____________    ___  /__________     __  
+__  /_/ /  __ `/_  ___/_  ___/  __ `/_  __ `/  _ \_  ___/    __  /_  _ \  __ \\   /_/  
+_  ____// /_/ /_(__  )_(__  )/ /_/ /_  /_/ //  __/(__  )     _  / /  __/ /_/ /   __   
+/_/     \__,_/ /____/ /____/ \__,_/ _\__, / \___//____/      /_/  \___/\____/   /_/   
+                                   /____/                                            
+       ~+
+
+                *       +
+          '                  |
+      ()    .-.,="``"=.    - o -
+            '=/_       \     |
+         *   |  '=._    |
+              \     `=./`,        '
+           .   '=.__.=' `='      *
+  +                         +
+       O      *        '       .\n"""
 
 
 def read_txt(file_name):
@@ -33,6 +50,7 @@ def write_txt(file_name, text):
 # Time outputs are in Epoch Unix timestamp (seconds since 01 Jan. 1970) UTC
 # One day is 86400 seconds.
 def predict_passes(time_start_epoch):
+    print_txt('DISP/cospas70.txt')
     global tles
     global qth
     qth = (qth[0], 360 - qth[1], qth[2])
@@ -70,13 +88,24 @@ def predict_passes(time_start_epoch):
         noaa_18 = y
         noaa_19 = z
 
-        timing.append((local_to_utc(int(metop_b.above(5).start)), local_to_utc(int(metop_b.above(5).end)), "METOP-B | SARSAT-13"))
-        timing.append((local_to_utc(int(meteor_m2_2.above(5).start)), local_to_utc(int(meteor_m2_2.above(5).end)), "METEOR M2-2 | COSPAS-14"))
-        timing.append((local_to_utc(int(noaa_15.above(5).start)), local_to_utc(int(noaa_15.above(5).end)), "NOAA 15 | SARSAT-07"))
-        timing.append((local_to_utc(int(noaa_18.above(5).start)), local_to_utc(int(noaa_18.above(5).end)), "NOAA 18 | SARSAT-10"))
-        timing.append((local_to_utc(int(noaa_19.above(5).start)), local_to_utc(int(noaa_19.above(5).end)), "NOAA 19 | SARSAT-12"))
-    # print(datetime.datetime.fromtimestamp(timing[0][0]).strftime("%d/%m/%Y %H:%M:%S")) # Ligne de débug
-    # print(datetime.datetime.fromtimestamp(timing[0][1]).strftime("%d/%m/%Y %H:%M:%S")) # Ligne de débug
+        timing.append(
+            (local_to_utc(int(metop_b.above(6).start)), local_to_utc(int(metop_b.above(6).end)), "SARSAT-13 | METOP-B"))
+        timing.append((local_to_utc(int(meteor_m2_2.above(6).start)), local_to_utc(int(meteor_m2_2.above(6).end)),
+                       "COSPAS-14 | METEOR M2-2"))
+        timing.append(
+            (local_to_utc(int(noaa_15.above(6).start)), local_to_utc(int(noaa_15.above(6).end)), "SARSAT-07 | NOAA 15"))
+        timing.append(
+            (local_to_utc(int(noaa_18.above(6).start)), local_to_utc(int(noaa_18.above(6).end)), "SARSAT-10 | NOAA 18"))
+        timing.append(
+            (local_to_utc(int(noaa_19.above(6).start)), local_to_utc(int(noaa_19.above(6).end)), "SARSAT-12 | NOAA 19"))
+    timing.sort()
+    count = 0
+    for i in range(len(timing)):
+        if timing[i - count][1] - timing[i - count][0] < 1:
+            timing.remove(timing[i - count])
+            count += 1
+    # for x in range(20):
+    #     print(datetime.datetime.fromtimestamp(timing[x][0]).strftime("%d/%m/%Y %H:%M:%S => ") + datetime.datetime.fromtimestamp(timing[x][1]).strftime("%d/%m/%Y %H:%M:%S | ") + timing[x][2])  # Ligne de débug
     return timing
 
 
@@ -86,6 +115,7 @@ def local_to_utc(local_time):
 
 
 def create_slots(num_slots, duration_seq, time_start):
+    global passages_txt
     time_start_epoch = timegm(time.strptime(time_start, date_time_format))
     duration_s = duration_seq * 60
     passes = predict_passes(time_start_epoch)
@@ -97,7 +127,8 @@ def create_slots(num_slots, duration_seq, time_start):
     while i < num_slots:
         free_slot = True
         for p in passes:
-            if p[0] <= slot <= p[1] or p[0] <= slot + duration_s <= p[1] or slot <= p[0] <= slot + duration_s or slot <= p[1] <= slot + duration_s:
+            if p[0] <= slot <= p[1] or p[0] <= slot + duration_s <= p[1] or slot <= p[0] <= slot + duration_s or slot <= \
+                    p[1] <= slot + duration_s:
                 free_slot = False
                 break
         if free_slot:
@@ -106,13 +137,19 @@ def create_slots(num_slots, duration_seq, time_start):
             slots.append((timestamp, timestamp_end))
             i += 1
         slot += 1800
+    j = 0
+    while passes[j][0] < slots[len(slots) - 1][1].timestamp():
+        passages_txt += datetime.datetime.fromtimestamp(passes[j][0]).strftime("\n%d/%m/%Y %H:%M:%S => ") + \
+                        datetime.datetime.fromtimestamp(passes[j][1]).strftime("%d/%m/%Y %H:%M:%S | ") + passes[j][2]
+        j += 1
+    passages_txt += datetime.datetime.fromtimestamp(passes[j][0]).strftime("\n%d/%m/%Y %H:%M:%S => ") + \
+                    datetime.datetime.fromtimestamp(passes[j][1]).strftime("%d/%m/%Y %H:%M:%S | ") + passes[j][2]
     return slots
 
 
 def writelst(num_seq, duration_seq, num_cren, file, time_start, file_path, qth_):
     global qth
     qth = qth_
-    print_txt('DISP/cospas70.txt')
     slots = create_slots(num_cren, duration_seq, time_start)
     lst = ""
     for i in range(len(slots)):
@@ -125,6 +162,7 @@ def writelst(num_seq, duration_seq, num_cren, file, time_start, file_path, qth_)
     print()
     write_txt('LST/' + file + '.lst', lst)
     write_txt('TLE/tle_' + file + '_lst.tle', tles)
+    write_txt('TLE/PASSAGES_LEO_' + file + '.txt', passages_txt)
     print('Décallage UTC de votre machine : ' + str(time.localtime().tm_gmtoff) + ' secondes (pris en compte pour la'
                                                                                   ' création des slots).')
 
@@ -132,7 +170,6 @@ def writelst(num_seq, duration_seq, num_cren, file, time_start, file_path, qth_)
 def writebatch(num_seq, duration_seq, num_cren, file, time_start, type_, qth_):
     global qth
     qth = qth_
-    print_txt('DISP/cospas70.txt')
     json_list = []
     slots = create_slots(num_cren, duration_seq, time_start)
     for i in range(len(slots)):
