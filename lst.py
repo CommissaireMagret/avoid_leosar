@@ -3,18 +3,20 @@ import argparse
 import datetime
 import time
 
-utc_offset = time.localtime().tm_gmtoff
+# Variables pour mettre en forme le temps.
 time_now = time.time()
-timeutc = time_now - utc_offset
 date_time_format = "%d/%m/%Y-%H:%M:%S"
 
+# Coordonées de la base d'émission (lat, long, alt).
 latN = 43.559281
 longE = 1.487430
-longW = 360 - longE
+# longW = 360 - longE
 qth = (latN, longE, 146)
 
+# Fichier où sont stockées les séquences binaires du PC de simu pour les émissions.
 file_path = 'C:\Seb\sequences\\'
 
+# Gestion des arguments en ligne de commande.
 parser = argparse.ArgumentParser()
 parser.add_argument("num_seq", nargs="?", default="6940", type=str, help='n° séq. bin')
 parser.add_argument("duration_seq", nargs="?", default="21", type=int, help='durée séq. en min.')
@@ -24,4 +26,5 @@ parser.add_argument("time_start", nargs="?", default=datetime.datetime.fromtimes
 parsed_args = parser.parse_args()
 
 if __name__ == '__main__':
+    # Execution de la fonction pour l'écriture d'un .lst en évitant les LEO.
     avoidleo.writelst(parsed_args.num_seq, parsed_args.duration_seq, parsed_args.num_cren, parsed_args.file, parsed_args.time_start, file_path, qth)

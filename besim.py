@@ -5,16 +5,17 @@ import argparse
 import datetime
 import time
 
-utc_offset = time.localtime().tm_gmtoff
+# Variables pour mettre en forme le temps.
 time_now = time.time()
-timeutc = time_now - utc_offset
 date_time_format = "%d/%m/%Y-%H:%M:%S"
 
-latN = 43.559281
-longE = 1.487430
-longW = 360 - longE
-qth = (latN, longE, 146)
+# Coordonées de la base d'émission (lat, long, alt).
+latN = -20.893652
+longE = 55.438187
+# longW = 360 - longE
+qth = (latN, longE, 100)
 
+# Gestion des arguments en ligne de commande.
 parser = argparse.ArgumentParser()
 parser.add_argument("num_seq", nargs="?", default="6940", type=str, help='n° séq. bin')
 parser.add_argument("duration_seq", nargs="?", default="21", type=int, help='durée séq. en min.')
@@ -25,4 +26,5 @@ parser.add_argument("type_", nargs="?", default="PERSONAL", type=str, help='Type
 parsed_args = parser.parse_args()
 
 if __name__ == '__main__':
+    # Execution de la fonction pour l'écriture d'un .json en évitant les LEO pour le simulateur de La Réunion.
     avoidleo.writebatch(parsed_args.num_seq, parsed_args.duration_seq, parsed_args.num_cren, parsed_args.file, parsed_args.time_start, parsed_args.type_, qth)
