@@ -10,8 +10,8 @@ time_now = time.time()
 date_time_format = "%d/%m/%Y-%H:%M:%S"
 
 # Coordonées de la base d'émission (lat, long, alt).
-latN = -20.893652
-longE = 55.438187
+latN = -20.909045
+longE = 55.513512
 # longW = 360 - longE
 qth = (latN, longE, 100)
 
