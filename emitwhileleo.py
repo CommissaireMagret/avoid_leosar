@@ -6,32 +6,61 @@ import json
 import urllib.error
 from calendar import timegm
 
-utc_offset = time.localtime().tm_gmtoff
+"""########################
+## VARIABLES GLOBALES ##
+########################"""
 
+# Variables pour mettre en forme le temps et déterminer le fuseau h de la machine.
+utc_offset = time.localtime().tm_gmtoff
 date_time_format = "%d/%m/%Y-%H:%M:%S"
 
+# Variable pour gérer les érreurs réseau
 url_error = False
 
+# Var. globale de position géographique
 qth = ()
+
+# Décaration de la variable des TLE (chaîne vide)
 tles = ""
+
+# Fichier texte pour avoir les infos sur les passages pendant emission
 slot_sat_txt = "Emissions pendant les passages de :\n"
 
 
 def read_txt(file_name):
+    """Opens a file and returns the content as a String
+
+    :param file_name: The name of the file to read (with the file path if needed).
+    :return: The string read in the txt file
+    """
     f = open(file_name, 'r')
     return f.read()
 
 
 def print_txt(file_name):
+    """Prints the content of a text file
+
+    :param file_name: The name of the file to print (with the file path if needed)
+    """
     print(read_txt(file_name))
 
 
 def write_txt(file_name, text):
+    """Writes a String in a txt file
+
+    :param file_name: Name of the file to write (with the file path if needed)
+    :param text: String to write in file
+    """
     txt_file = open(file_name, "wt")
     txt_file.write(text)
 
 
 def local_to_utc(local_time):
+    """Returns the utc time of an epoch timestamp depending on the time zone of the machine
+
+    :param local_time: int = an epoch timestamp
+    :return: int = the same epoch timestamp in utc
+    """
     utc_time = local_time - utc_offset
     return utc_time
 
@@ -39,6 +68,12 @@ def local_to_utc(local_time):
 # Time outputs are in Epoch Unix timestamp (seconds since 01 Jan. 1970) UTC
 # One day is 86400 seconds.
 def predict_passes(time_start_epoch):
+    """Predict passes of NOAA 19 LEO SAR satellite with the pypredict library
+
+    :param time_start_epoch: Beginning of the prediction timestamp
+    :return: A sorted list of the passes:
+             list[tuple[int = pass start time over 5°, int = pass end time under 5°, str = satellite name]]
+    """
     print_txt('DISP/cospas70.txt')
     global qth
     global tles
@@ -86,6 +121,13 @@ def predict_passes(time_start_epoch):
 
 
 def create_slots(num_slots, duration_seq, time_start):
+    """Creates slots while  LEO sat NOAA-19 passes
+
+    :param num_slots: int = number of slots desired
+    :param duration_seq: int = duration of the slot in seconds (depends on the duration of the sequence to emit)
+    :param time_start: str = date and time of the first slot desired (format : "%dd/%mm/%YYYY-%HH:%MM:%SS")
+    :return: list[tuple[start of slot epoch, end of slot epoch]]
+    """
     global slot_sat_txt
     time_start_epoch = timegm(time.strptime(time_start, date_time_format))
     duration_s = duration_seq * 60
@@ -115,6 +157,16 @@ def create_slots(num_slots, duration_seq, time_start):
 
 
 def writelst(num_seq, duration_seq, num_cren, file, time_start, file_path, qth_):
+    """Writes the slots in a lst  file using above functions
+
+    :param num_seq: str = name of the binary sequence without the ".bin" extension
+    :param duration_seq: int = duration of the sequence to emit (rounded up)
+    :param num_cren: int = number of slots desired
+    :param file: str = name (with path if needed) of the .lst file to write
+    :param time_start: str = date and time of the first slot desired (format : "%dd/%mm/%YYYY-%HH:%MM:%SS")
+    :param file_path: str = path to the directory where .bin seq are stored on the FGB/SGB-simulator
+    :param qth_: tuple[int = longitude, int = latitude EAST, int = altitude in meters]
+    """
     global qth
     qth = qth_
     slots = create_slots(num_cren, duration_seq, time_start)
@@ -140,6 +192,17 @@ def writelst(num_seq, duration_seq, num_cren, file, time_start, file_path, qth_)
 
 
 def writebatch(num_seq, duration_seq, num_cren, file, time_start, type_, qth_):
+    """Writes the slots in a json  file using above functions
+
+    :param num_seq: str = name of the binary sequence without the ".bin" extension
+    :param duration_seq: int = duration of the sequence to emit (rounded up)
+    :param num_cren: int = number of slots desired
+    :param file: str = name (with path if needed) of the .lst file to write
+    :param time_start: str = date and time of the first slot desired (format : "%dd/%mm/%YYYY-%HH:%MM:%SS")
+    :param file_path: str = path to the directory where .bin seq are stored on the FGB/SGB-simulator
+    :param type_: = type for the simulator (PERSONAL or FACTORY, PERSONAL by default)
+    :param qth_: tuple[int = longitude, int = latitude EAST, int = altitude in meters]
+    """
     global qth
     qth = qth_
     json_list = []

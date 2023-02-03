@@ -6,9 +6,9 @@ import json
 import urllib.error
 from calendar import timegm
 
-########################
+"""########################
 ## VARIABLES GLOBALES ##
-########################
+########################"""
 
 # Variables pour mettre en forme le temps et déterminer le fuseau h de la machine.
 utc_offset = time.localtime().tm_gmtoff
@@ -188,10 +188,10 @@ def create_slots(num_slots, duration_seq, time_start):
     j = 0
     while passes[j][0] < slots[len(slots) - 1][1].timestamp():
         passages_txt += datetime.datetime.fromtimestamp(passes[j][0]).strftime("\n%d/%m/%Y %H:%M:%S => ") + \
-                        datetime.datetime.fromtimestamp(passes[j][1]).strftime("%d/%m/%Y %H:%M:%S | ") + passes[j][2]
+                        datetime.datetime.fromtimestamp(passes[j][1]).strftime("%H:%M:%S | ") + passes[j][2]
         j += 1
     passages_txt += datetime.datetime.fromtimestamp(passes[j][0]).strftime("\n%d/%m/%Y %H:%M:%S => ") + \
-                    datetime.datetime.fromtimestamp(passes[j][1]).strftime("%d/%m/%Y %H:%M:%S | ") + passes[j][2]
+                    datetime.datetime.fromtimestamp(passes[j][1]).strftime("%H:%M:%S | ") + passes[j][2]
     return slots
 
 
@@ -230,7 +230,7 @@ def writelst(num_seq, duration_seq, num_cren, file, time_start, file_path, qth_)
 
 
 def writebatch(num_seq, duration_seq, num_cren, file, time_start, type_, qth_):
-    """Writes the slots in a lst  file using above functions
+    """Writes the slots in a json  file using above functions
 
     :param num_seq: str = name of the binary sequence without the ".bin" extension
     :param duration_seq: int = duration of the sequence to emit (rounded up)
